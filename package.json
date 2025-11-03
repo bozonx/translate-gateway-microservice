@@ -1,7 +1,7 @@
 {
-  "name": "microservice-boilerplate",
-  "version": "0.1.0",
-  "description": "NestJS + Fastify microservice boilerplate with health checks",
+  "name": "translate-gateway-microservice",
+  "version": "0.2.0",
+  "description": "Translation gateway microservice",
   "main": "dist/src/main.js",
   "scripts": {
     "build": "nest build",
@@ -21,6 +21,7 @@
     "test:e2e": "jest --selectProjects e2e"
   },
   "dependencies": {
+    "@google-cloud/translate": "^8.3.0",
     "@nestjs/common": "^11.1.8",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.8",

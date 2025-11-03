@@ -1,8 +1,8 @@
 services:
-  nestjs-boilerplate:
-    image: ghcr.io/bozonx/nestjs-boilerplate:latest
-    container_name: nestjs-boilerplate
-    hostname: nestjs-boilerplate
+  translate-gateway-microservice:
+    image: ghcr.io/bozonx/translate-gateway-microservice:latest
+    container_name: translate-gateway-microservice
+    hostname: translate-gateway-microservice
     ports:
       - '8080:80'
     environment:

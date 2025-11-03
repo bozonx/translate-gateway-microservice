@@ -7,6 +7,7 @@ import { AllExceptionsFilter } from '@common/filters/all-exceptions.filter';
 import appConfig from '@config/app.config';
 import type { AppConfig } from '@config/app.config';
 import pkg from '../package.json';
+import { TranslateModule } from '@modules/translate/translate.module';
 
 @Module({
   imports: [
@@ -89,6 +90,7 @@ import pkg from '../package.json';
       },
     }),
     HealthModule,
+    TranslateModule,
   ],
   controllers: [],
   providers: [
