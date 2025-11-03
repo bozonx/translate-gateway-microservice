@@ -1,0 +1,27 @@
+services:
+  nestjs-boilerplate:
+    image: ghcr.io/bozonx/nestjs-boilerplate:latest
+    container_name: nestjs-boilerplate
+    hostname: nestjs-boilerplate
+    ports:
+      - '8080:80'
+    environment:
+      # Basic app settings
+      - NODE_ENV=production
+      - LISTEN_HOST=0.0.0.0
+      - LISTEN_PORT=80
+      - TZ=UTC
+
+      # API prefix
+      - API_BASE_PATH=api
+      - API_VERSION=v1
+
+      # Logging
+      - LOG_LEVEL=warn
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:80/api/v1/health || exit 1']
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
