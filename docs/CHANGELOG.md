@@ -2,24 +2,24 @@
 
 ## Unreleased
 
-- README ориентирован на production-использование (убраны dev-инструкции)
-- Добавлен `docs/dev.md` с инструкциями по разработке и dev-режиму
-- Уточнены prod URL и Docker Compose команды в README
-- В разделе env добавлено упоминание `TZ` и что источником истины является `.env.production.example`
- - Добавлен модуль Translate: REST-эндпоинт `POST /{API_BASE_PATH}/v1/translate`
- - Реализован провайдер Google Translate и абстракция провайдеров
- - Конфиг `translation.config.ts`: `TRANSLATE_DEFAULT_PROVIDER`, `TRANSLATE_MAX_TEXT_LENGTH`
- - Тесты: unit (DTO, сервис), e2e (translate, health)
- - README переписан на английском, ориентирован на production
- - Добавлена документация API (docs/api.md)
+- README refocused for production usage (dev instructions removed)
+- Added `docs/dev.md` with development and dev-mode instructions
+- Clarified production URLs and Docker Compose example in README
+- Environment section updated to mention `TZ` and that `.env.production.example` is the source of truth
+- Added Translate module: REST endpoint `POST /{API_BASE_PATH}/v1/translate`
+- Implemented Google Translate provider and provider abstraction
+- Added `translation.config.ts` with `TRANSLATE_DEFAULT_PROVIDER`, `TRANSLATE_MAX_TEXT_LENGTH`
+- Tests: unit (DTO, service) and e2e (translate, health)
+- README rewritten in English, production-focused
+- Added API documentation (docs/api.md); expanded with status codes and examples
 
 ## 0.15.0 — Boilerplate refactor
 
-- Полностью удалены функциональности STT, GraphQL и Auth
-- Оставлен только модуль Health (простой health-check)
-- Упрощены конфиги окружения (`.env.*`)
-- Обновлён `AppModule` и логирование (service: `nestjs-boilerplate`)
-- Очищены и пересобраны тесты (unit + e2e только для health)
-- Переработан `docker-compose.yml` до минимального примера (локальная сборка)
-- Обновлён `README.md` (рус.)
-- Удалены устаревшие документы в `docs/` (STT/Auth/GraphQL)
+- Removed legacy STT, GraphQL, and Auth features
+- Kept only the Health module (simple health-check)
+- Simplified environment configs (`.env.*`)
+- Updated `AppModule` and logging (service: `nestjs-boilerplate`)
+- Cleaned and rebuilt tests (unit + e2e for health only)
+- Simplified `docker-compose.yml` to a minimal local example
+- Updated README.md (ru)
+- Removed outdated docs in `docs/` (STT/Auth/GraphQL)

@@ -22,10 +22,23 @@ Behavior & format:
 - Output format mirrors input. The service detects whether the input contains HTML and passes `text|html` to the provider.
 - Language validity is delegated to the provider; the service does not validate language codes.
 
+Headers:
+
+- `Content-Type: application/json`
+
 Response (JSON):
 
 - `translatedText: string`
 - `provider: string`
+
+Success example (200):
+
+```json
+{
+  "translatedText": "Привет, мир!",
+  "provider": "google"
+}
+```
 
 Examples:
 
@@ -55,6 +68,29 @@ curl -s -X POST 'http://localhost:80/api/v1/translate' \
         "targetLang": "en",
         "maxLength": 2000
       }'
+```
+
+## Status Codes
+
+- `200 OK` — translation successful.
+- `400 Bad Request` — invalid payload (e.g., `text`/`targetLang` not strings).
+- `404 Not Found` — unknown provider.
+- `413 Payload Too Large` — input exceeds the effective limit.
+- `422 Unprocessable Entity` — provider error (quota/data limits, etc.).
+- `503 Service Unavailable` — provider unavailable/timeout.
+
+## GET /health
+
+Simple service liveness/readiness check.
+
+```bash
+curl -s 'http://localhost:80/api/v1/health'
+```
+
+Response:
+
+```json
+{ "status": "ok" }
 ```
 
 ## Errors

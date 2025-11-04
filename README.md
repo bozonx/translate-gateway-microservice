@@ -36,6 +36,12 @@ pnpm start:prod
 Default URL (prod): `http://localhost:80/api/v1`
 Docker Compose: `http://localhost:8080/api/v1`
 
+## Documentation
+
+- API: [docs/api.md](./docs/api.md)
+- Development: [docs/dev.md](./docs/dev.md)
+- Changelog: [docs/CHANGELOG.md](./docs/CHANGELOG.md)
+
 ## Configuration
 
 Source of truth: `.env.production.example`.
@@ -121,24 +127,17 @@ services:
 - Use the health endpoint for readiness checks (Kubernetes, Swarm, etc.).
 - Enforce Auth, CORS, and Rate Limiting at your API Gateway.
 
-## Testing
-
-```bash
-# All tests
-pnpm test
-
-# Unit tests
-pnpm test:unit
-
-# E2E tests
-pnpm test:e2e
-```
-
 ## Limitations
 
 - Providers: only Google Translate for now (extensible via provider interface).
 - Format detection is heuristic (basic HTML tag detection).
 - No built-in security features; must be handled at the API Gateway layer.
+
+# Development guide
+
+Development documentation has moved to the STT Gateway repository to avoid duplication.
+
+Please see: `stt-gateway-microservice/docs/dev.md`.
 
 ## License
 
