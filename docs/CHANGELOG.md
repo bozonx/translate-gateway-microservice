@@ -14,6 +14,8 @@
 - Added API documentation (docs/api.md); expanded with status codes and examples
  - New env: `TRANSLATE_ALLOWED_PROVIDERS` (comma-separated allow-list; empty = all allowed)
  - New env: `REQUEST_TIMEOUT_SEC` (default 60s) for provider calls; service returns 503 on timeout
+- Added DeepL provider support (set `provider: "deepl"` in request)
+- New env: `DEEPL_AUTH_KEY` for DeepL API (Free or Pro)
 
 ## 0.15.0 — Boilerplate refactor
 

@@ -26,6 +26,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.8",
     "@nestjs/platform-fastify": "^11.1.8",
+    "deepl-node": "^1.20.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "fastify": "^5.6.1",

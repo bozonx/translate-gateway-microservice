@@ -14,7 +14,7 @@ Request body (JSON):
 - `text: string` — required. Source text.
 - `targetLang: string` — required. Target language (ISO 639-1), e.g., `en`, `ru`.
 - `sourceLang?: string` — optional. Source language; if omitted, provider may detect it.
-- `provider?: string` — optional. Provider name (defaults to `TRANSLATE_DEFAULT_PROVIDER`). Currently supported: `google`.
+- `provider?: string` — необязательно. Имя провайдера (по умолчанию — `TRANSLATE_DEFAULT_PROVIDER`). Поддерживаются: `google`, `deepl`.
 - `maxLength?: number` — optional. Per-request max input length. Effective limit: `min(TRANSLATE_MAX_TEXT_LENGTH, maxLength)`.
 
 Behavior & format:
@@ -123,12 +123,12 @@ Common cases:
 - `TRANSLATE_ALLOWED_PROVIDERS` — comma-separated allow-list; if empty, all providers are allowed.
 - `REQUEST_TIMEOUT_SEC` — timeout for provider requests (default: `60`).
 - Google ADC: set `GOOGLE_APPLICATION_CREDENTIALS` if needed (path to service account JSON).
+- DeepL: укажите `DEEPL_AUTH_KEY` — ключ API DeepL.
 
 See `README.md` for configuration and Docker details.
 
 ## Limitations
 
-- Only Google Translate is supported currently (extensible via provider interface).
 - Format detection is a heuristic based on presence of HTML tags.
 - Security (CORS/Auth/Rate Limit) is intentionally not included — enforce at API Gateway.
 

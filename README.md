@@ -8,7 +8,7 @@ Production-ready microservice exposing a unified REST API for text translation. 
 - Unified translate endpoint `/{API_BASE_PATH}/v1/translate`
 - Pino logging (JSON in production)
 - Global error filter with consistent error shape
-- Provider abstraction (default: Google Translate)
+- Provider abstraction (Google Translate, DeepL)
 - Docker-ready
 - Unit and E2E tests
 
@@ -60,6 +60,8 @@ Source of truth: `.env.production.example`.
   - `REQUEST_TIMEOUT_SEC` (default `60`) — timeout for provider requests
 - Google Translate (ADC)
   - `GOOGLE_APPLICATION_CREDENTIALS` — path to service account JSON (if required)
+- DeepL
+  - `DEEPL_AUTH_KEY` — DeepL API key (Free or Pro)
 
 Notes:
 - This service intentionally omits CORS, Auth, and Rate Limiting. Enforce them at your API Gateway.
@@ -71,7 +73,7 @@ Notes:
     - `text: string` (required)
     - `targetLang: string` (required) — ISO 639-1
     - `sourceLang?: string` (optional)
-    - `provider?: string` (optional) — overrides default provider; currently only `google`
+    - `provider?: string` (optional) — overrides default provider; options: `google`, `deepl`
     - `maxLength?: number` (optional) — per-request cap; effective limit is `min(ENV, maxLength)`
   - Response body:
     - `translatedText: string`
@@ -131,7 +133,7 @@ services:
 
 ## Limitations
 
-- Providers: only Google Translate for now (extensible via provider interface).
+- Providers: Google Translate and DeepL (extensible via provider interface).
 - Format detection is heuristic (basic HTML tag detection).
 - No built-in security features; must be handled at the API Gateway layer.
 
