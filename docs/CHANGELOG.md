@@ -16,6 +16,7 @@
  - New env: `REQUEST_TIMEOUT_SEC` (default 60s) for provider calls; service returns 503 on timeout
 - Added DeepL provider support (set `provider: "deepl"` in request)
 - New env: `DEEPL_AUTH_KEY` for DeepL API (Free or Pro)
+- New env: `HTTP_REQUEST_BODY_LIMIT_MB` (default `10`) to configure Fastify body parser max body size
 
 ## 0.15.0 — Boilerplate refactor
 

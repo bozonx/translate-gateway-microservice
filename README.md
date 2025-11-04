@@ -53,6 +53,7 @@ Source of truth: `.env.production.example`.
   - `API_BASE_PATH` (default `api`)
   - `LOG_LEVEL` = `trace|debug|info|warn|error|fatal|silent` (prod default `warn`)
   - `TZ` (default `UTC`)
+  - `HTTP_REQUEST_BODY_LIMIT_MB` (default `10`) — max HTTP request body size (MB) for Fastify body parser
 - Translation
   - `TRANSLATE_DEFAULT_PROVIDER` (default `google`)
   - `TRANSLATE_MAX_TEXT_LENGTH` (default `5000`) — hard cap for input text length

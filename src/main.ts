@@ -9,10 +9,13 @@ import type { AppConfig } from '@config/app.config';
 
 async function bootstrap() {
   // Create app with bufferLogs enabled to capture early logs
+  const bodyLimitMb = parseInt(process.env.HTTP_REQUEST_BODY_LIMIT_MB ?? '10', 10);
+  const httpBodyLimit = Number.isFinite(bodyLimitMb) && bodyLimitMb > 0 ? bodyLimitMb * 1024 * 1024 : 10 * 1024 * 1024;
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({
       logger: false, // We'll use Pino logger instead
+      bodyLimit: httpBodyLimit,
     }),
     {
       bufferLogs: true,
