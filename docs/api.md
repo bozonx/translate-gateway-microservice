@@ -14,7 +14,7 @@ Request body (JSON):
 - `text: string` — required. Source text.
 - `targetLang: string` — required. Target language (ISO 639-1), e.g., `en`, `ru`.
 - `sourceLang?: string` — optional. Source language; if omitted, provider may detect it.
-- `provider?: string` — необязательно. Имя провайдера (по умолчанию — `TRANSLATE_DEFAULT_PROVIDER`). Поддерживаются: `google`, `deepl`, `deepseek`.
+- `provider?: string` — необязательно. Имя провайдера (по умолчанию — `TRANSLATE_DEFAULT_PROVIDER`). Поддерживаются: `google`, `deepl`, `deepseek`, `openrouter`.
 - `model?: string` — необязательно. Имя модели для LLM‑провайдера (например, `deepseek-chat`). Если не указано — используется `DEEPSEEK_DEFAULT_MODEL`.
 - `maxLength?: number` — optional. Per-request max input length. Effective limit: `min(TRANSLATE_MAX_TEXT_LENGTH, maxLength)`.
 
@@ -131,6 +131,10 @@ Common cases:
   - `DEEPSEEK_API_BASE_URL` — базовый URL (по умолчанию: `https://api.deepseek.com`)
   - `DEEPSEEK_DEFAULT_MODEL` — модель по умолчанию (например, `deepseek-chat`)
   - `TRANSLATE_LLM_SYSTEM_PROMPT` — шаблон системного сообщения для перевода (`{targetLang}`, `{sourceLang}`, `{format}`)
+- OpenRouter (OpenAI‑совместимый):
+  - `OPENROUTER_API_KEY` — ключ API
+  - `OPENROUTER_API_BASE_URL` — базовый URL (по умолчанию: `https://openrouter.ai/api/v1`)
+  - `OPENROUTER_DEFAULT_MODEL` — модель по умолчанию (например, `openrouter/auto`)
 
 See `README.md` for configuration and Docker details.
 

@@ -17,6 +17,9 @@ describe('Translate (e2e)', () => {
   const fakeDeepseek: TranslateProvider = {
     translate: async ({ text }) => ({ translatedText: `ds:${text}`, provider: 'deepseek', model: 'deepseek-chat' }),
   };
+  const fakeOpenrouter: TranslateProvider = {
+    translate: async ({ text }) => ({ translatedText: `or:${text}`, provider: 'openrouter', model: 'openrouter/auto' }),
+  };
 
   async function createApp(): Promise<NestFastifyApplication> {
     // Ensure defaults the same as in main.ts and test factory
@@ -47,6 +50,36 @@ describe('Translate (e2e)', () => {
 
   beforeEach(async () => {
     app = await createApp();
+  });
+
+  it('allows selecting openrouter provider when available', async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(TRANSLATE_PROVIDER_REGISTRY)
+      .useValue(makeRegistry({ google: fakeProvider, openrouter: fakeOpenrouter }))
+      .compile();
+
+    const localApp = moduleRef.createNestApplication<NestFastifyApplication>(
+      new FastifyAdapter({ logger: false }),
+    );
+    localApp.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+    const apiBasePath = (process.env.API_BASE_PATH || 'api').replace(/^\/+|\/+$/g, '');
+    localApp.setGlobalPrefix(`${apiBasePath}/v1`);
+    await localApp.init();
+    await localApp.getHttpAdapter().getInstance().ready();
+
+    const res = await localApp.inject({
+      method: 'POST',
+      url: '/api/v1/translate',
+      payload: { text: 'hello', targetLang: 'ru', provider: 'openrouter' },
+    });
+    expect(res.statusCode).toBe(201);
+    const body = JSON.parse(res.body);
+    expect(body.translatedText).toBe('or:hello');
+    expect(body.provider).toBe('openrouter');
+
+    await localApp.close();
   });
 
   afterEach(async () => {
