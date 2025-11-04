@@ -12,6 +12,8 @@
 - Tests: unit (DTO, service) and e2e (translate, health)
 - README rewritten in English, production-focused
 - Added API documentation (docs/api.md); expanded with status codes and examples
+ - New env: `TRANSLATE_ALLOWED_PROVIDERS` (comma-separated allow-list; empty = all allowed)
+ - New env: `REQUEST_TIMEOUT_SEC` (default 60s) for provider calls; service returns 503 on timeout
 
 ## 0.15.0 — Boilerplate refactor
 

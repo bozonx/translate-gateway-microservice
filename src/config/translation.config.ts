@@ -11,12 +11,29 @@ export class TranslationConfig {
   @Min(1)
   @Max(20000)
   public maxTextLength!: number;
+
+  @IsInt()
+  @Min(1)
+  @Max(600)
+  public requestTimeoutSec!: number;
+
+  public allowedProviders?: string[];
 }
 
 export default registerAs('translation', (): TranslationConfig => {
+  const allowedProvidersRaw = (process.env.TRANSLATE_ALLOWED_PROVIDERS ?? '').trim();
+  const allowedProviders = allowedProvidersRaw
+    ? allowedProvidersRaw
+        .split(',')
+        .map(p => p.trim().toLowerCase())
+        .filter(Boolean)
+    : undefined;
+
   const config = plainToClass(TranslationConfig, {
     defaultProvider: (process.env.TRANSLATE_DEFAULT_PROVIDER ?? 'google').trim(),
     maxTextLength: parseInt(process.env.TRANSLATE_MAX_TEXT_LENGTH ?? '5000', 10),
+    requestTimeoutSec: parseInt(process.env.REQUEST_TIMEOUT_SEC ?? '60', 10),
+    allowedProviders,
   });
 
   const errors = validateSync(config, { skipMissingProperties: false });

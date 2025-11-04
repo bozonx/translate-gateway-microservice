@@ -120,6 +120,8 @@ Common cases:
 
 - `TRANSLATE_DEFAULT_PROVIDER` — default provider (default: `google`).
 - `TRANSLATE_MAX_TEXT_LENGTH` — max input length.
+- `TRANSLATE_ALLOWED_PROVIDERS` — comma-separated allow-list; if empty, all providers are allowed.
+- `REQUEST_TIMEOUT_SEC` — timeout for provider requests (default: `60`).
 - Google ADC: set `GOOGLE_APPLICATION_CREDENTIALS` if needed (path to service account JSON).
 
 See `README.md` for configuration and Docker details.

@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException, PayloadTooLargeException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, PayloadTooLargeException, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { TranslationConfig } from '@config/translation.config';
 import type { TranslateProviderRegistry } from './providers/translate.provider';
@@ -18,6 +18,11 @@ export class TranslateService {
     const translationConfig = this.configService.get<TranslationConfig>('translation')!;
 
     const providerName = (dto.provider ?? translationConfig.defaultProvider).toLowerCase();
+
+    const allowed = translationConfig.allowedProviders;
+    if (Array.isArray(allowed) && allowed.length > 0 && !allowed.includes(providerName)) {
+      throw new NotFoundException({ message: 'Unknown provider', provider: providerName });
+    }
     const provider = this.registry.get(providerName);
 
     if (!provider) {
@@ -37,12 +42,28 @@ export class TranslateService {
 
     const format = this.detectFormat(dto.text);
 
-    const result = await provider.translate({
-      text: dto.text,
-      targetLang: dto.targetLang,
-      sourceLang: dto.sourceLang,
-      format,
-    });
+    const timeoutMs = Math.max(1, translationConfig.requestTimeoutSec) * 1000;
+    const result = (await new Promise<TranslateResponseDto>((resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new ServiceUnavailableException({ message: 'Provider request timed out', provider: providerName, timeoutSec: translationConfig.requestTimeoutSec })),
+        timeoutMs,
+      );
+      provider
+        .translate({
+          text: dto.text,
+          targetLang: dto.targetLang,
+          sourceLang: dto.sourceLang,
+          format,
+        })
+        .then(r => {
+          clearTimeout(timer);
+          resolve(r);
+        })
+        .catch(err => {
+          clearTimeout(timer);
+          reject(err);
+        });
+    })) as TranslateResponseDto;
 
     return result;
   }

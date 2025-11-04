@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { TranslateService } from '@/modules/translate/translate.service';
 import { TRANSLATE_PROVIDER_REGISTRY, type TranslateProvider, type TranslateProviderRegistry } from '@/modules/translate/providers/translate.provider';
 import { ConfigService } from '@nestjs/config';
-import { PayloadTooLargeException, NotFoundException } from '@nestjs/common';
+import { PayloadTooLargeException, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 
 function makeRegistry(map: Record<string, TranslateProvider>): TranslateProviderRegistry {
   return new Map<string, TranslateProvider>(Object.entries(map));
@@ -26,7 +26,8 @@ describe('TranslateService (unit)', () => {
           provide: ConfigService,
           useValue: {
             get: (key: string) => {
-              if (key === 'translation') return { defaultProvider: 'google', maxTextLength: 10 };
+              if (key === 'translation')
+                return { defaultProvider: 'google', maxTextLength: 10, requestTimeoutSec: 60 };
               return undefined;
             },
           },
@@ -64,5 +65,86 @@ describe('TranslateService (unit)', () => {
     await expect(
       service.translate({ text: 'x', targetLang: 'ru', provider: 'unknown' })
     ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('blocks provider not in allowed list when allow-list is set', async () => {
+    const altProvider: TranslateProvider = {
+      translate: jest.fn(async ({ text }) => ({ translatedText: `alt:${text}`, provider: 'alt' })),
+    };
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        TranslateService,
+        {
+          provide: TRANSLATE_PROVIDER_REGISTRY,
+          useValue: makeRegistry({ google: fakeProvider, alt: altProvider }),
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: (key: string) => {
+              if (key === 'translation')
+                return {
+                  defaultProvider: 'google',
+                  maxTextLength: 10,
+                  requestTimeoutSec: 60,
+                  allowedProviders: ['google'],
+                };
+              return undefined;
+            },
+          },
+        },
+      ],
+    }).compile();
+
+    const localService = moduleRef.get(TranslateService);
+
+    await expect(
+      localService.translate({ text: 'x', targetLang: 'ru', provider: 'alt' })
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('allows provider from allow-list and times out when provider is slow', async () => {
+    jest.useFakeTimers();
+
+    const slowProvider: TranslateProvider = {
+      translate: jest.fn(async () => new Promise(() => {})), // never resolves
+    };
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        TranslateService,
+        {
+          provide: TRANSLATE_PROVIDER_REGISTRY,
+          useValue: makeRegistry({ google: slowProvider }),
+        },
+        {
+          provide: ConfigService,
+          useValue: {
+            get: (key: string) => {
+              if (key === 'translation')
+                return {
+                  defaultProvider: 'google',
+                  maxTextLength: 10,
+                  requestTimeoutSec: 1,
+                  allowedProviders: ['google'],
+                };
+              return undefined;
+            },
+          },
+        },
+      ],
+    }).compile();
+
+    const localService = moduleRef.get(TranslateService);
+
+    const promise = localService.translate({ text: 'x', targetLang: 'ru' });
+
+    // Fast-forward timers to trigger timeout
+    jest.advanceTimersByTime(1000);
+
+    await expect(promise).rejects.toBeInstanceOf(ServiceUnavailableException);
+
+    jest.useRealTimers();
   });
 });

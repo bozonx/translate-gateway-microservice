@@ -56,6 +56,8 @@ Source of truth: `.env.production.example`.
 - Translation
   - `TRANSLATE_DEFAULT_PROVIDER` (default `google`)
   - `TRANSLATE_MAX_TEXT_LENGTH` (default `5000`) — hard cap for input text length
+  - `TRANSLATE_ALLOWED_PROVIDERS` — comma-separated allow-list; if empty, all providers are allowed
+  - `REQUEST_TIMEOUT_SEC` (default `60`) — timeout for provider requests
 - Google Translate (ADC)
   - `GOOGLE_APPLICATION_CREDENTIALS` — path to service account JSON (if required)
 
