@@ -6,7 +6,7 @@
 - Добавлен `docs/dev.md` с инструкциями по разработке и dev-режиму
 - Уточнены prod URL и Docker Compose команды в README
 - В разделе env добавлено упоминание `TZ` и что источником истины является `.env.production.example`
- - Добавлен модуль Translate: REST-эндпоинт `POST /{API_BASE_PATH}/{API_VERSION}/translate`
+ - Добавлен модуль Translate: REST-эндпоинт `POST /{API_BASE_PATH}/v1/translate`
  - Реализован провайдер Google Translate и абстракция провайдеров
  - Конфиг `translation.config.ts`: `TRANSLATE_DEFAULT_PROVIDER`, `TRANSLATE_MAX_TEXT_LENGTH`
  - Тесты: unit (DTO, сервис), e2e (translate, health)

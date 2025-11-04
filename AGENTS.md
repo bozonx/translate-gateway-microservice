@@ -18,6 +18,7 @@
   - Development stage docs: `dev_docs/`
   - Update `docs/CHANGELOG.md` for significant changes
   - Keep `README.md` up to date
+  - Write all the documentation and jsdoc comments in English
 - Environment variables: `.env.production.example` is the source of truth for expected variables
 
 ### TypeScript Standards
@@ -28,5 +29,4 @@
 
 ### Agent Expectations
 
-- Prefer targeted code edits over full rewrites if you not asked to refactor
 - When adding or changing functionality update tests and documentation in their respective directories also update README.md if necessary

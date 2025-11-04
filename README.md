@@ -4,8 +4,8 @@ Production-ready microservice exposing a unified REST API for text translation. 
 
 ## Features
 
-- Health endpoint `/{API_BASE_PATH}/{API_VERSION}/health`
-- Unified translate endpoint `/{API_BASE_PATH}/{API_VERSION}/translate`
+- Health endpoint `/{API_BASE_PATH}/v1/health`
+- Unified translate endpoint `/{API_BASE_PATH}/v1/translate`
 - Pino logging (JSON in production)
 - Global error filter with consistent error shape
 - Provider abstraction (default: Google Translate)
@@ -45,7 +45,6 @@ Source of truth: `.env.production.example`.
   - `LISTEN_HOST` (e.g. `0.0.0.0`)
   - `LISTEN_PORT` (e.g. `80`)
   - `API_BASE_PATH` (default `api`)
-  - `API_VERSION` (default `v1`)
   - `LOG_LEVEL` = `trace|debug|info|warn|error|fatal|silent` (prod default `warn`)
   - `TZ` (default `UTC`)
 - Translation
@@ -59,7 +58,7 @@ Notes:
 
 ## API Overview
 
-- POST `/{API_BASE_PATH}/{API_VERSION}/translate`
+- POST `/{API_BASE_PATH}/v1/translate`
   - Request body:
     - `text: string` (required)
     - `targetLang: string` (required) — ISO 639-1
@@ -100,7 +99,6 @@ services:
       - LISTEN_HOST=0.0.0.0
       - LISTEN_PORT=80
       - API_BASE_PATH=api
-      - API_VERSION=v1
       - LOG_LEVEL=warn
       - TRANSLATE_DEFAULT_PROVIDER=google
       - TRANSLATE_MAX_TEXT_LENGTH=5000
@@ -114,7 +112,7 @@ services:
 ## Observability
 
 - Logs: Pino JSON in production; safe redaction for `authorization` and `x-api-key` headers.
-- Health: `GET /{API_BASE_PATH}/{API_VERSION}/health`
+- Health: `GET /{API_BASE_PATH}/v1/health`
 - Graceful shutdown enabled.
 
 ## Scaling & Operations

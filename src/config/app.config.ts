@@ -14,9 +14,6 @@ export class AppConfig {
   @IsString()
   public apiBasePath!: string;
 
-  @IsString()
-  public apiVersion!: string;
-
   @IsIn(['development', 'production', 'test'])
   public nodeEnv!: string;
 
@@ -30,7 +27,6 @@ export default registerAs('app', (): AppConfig => {
     port: parseInt(process.env.LISTEN_PORT ?? '80', 10),
     host: process.env.LISTEN_HOST ?? '0.0.0.0',
     apiBasePath: (process.env.API_BASE_PATH ?? 'api').replace(/^\/+|\/+$/g, ''),
-    apiVersion: (process.env.API_VERSION ?? 'v1').replace(/^\/+|\/+$/g, ''),
     nodeEnv: process.env.NODE_ENV ?? 'production',
     logLevel: process.env.LOG_LEVEL ?? 'warn',
   });
@@ -46,3 +42,4 @@ export default registerAs('app', (): AppConfig => {
 
   return config;
 });
+

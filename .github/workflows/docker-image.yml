@@ -30,10 +30,8 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          # Не устанавливаем зависимости здесь, только pnpm
           run_install: false
 
-      # Теперь Node.js с кэшем pnpm (pnpm уже в PATH)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:

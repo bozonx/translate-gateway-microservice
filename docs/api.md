@@ -1,6 +1,6 @@
 # Translation API (Translate Gateway)
 
-Base path: `/{API_BASE_PATH}/{API_VERSION}` (default: `/api/v1`).
+Base path: `/{API_BASE_PATH}/v1` (default: `/api/v1`).
 
 ## Endpoints
 
@@ -96,5 +96,5 @@ See `README.md` for configuration and Docker details.
 
 ## API Versioning
 
-- Version path is set via `API_VERSION` (default `v1`).
-- For breaking changes, add a new versioned path and keep backward compatibility when possible.
+- API version is fixed to `v1`.
+- For breaking changes, introduce a new versioned path and keep backward compatibility when possible.

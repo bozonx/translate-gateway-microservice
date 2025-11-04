@@ -18,7 +18,6 @@ describe('Translate (e2e)', () => {
   async function createApp(): Promise<NestFastifyApplication> {
     // Ensure defaults the same as in main.ts and test factory
     process.env.API_BASE_PATH = process.env.API_BASE_PATH ?? 'api';
-    process.env.API_VERSION = process.env.API_VERSION ?? 'v1';
 
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
@@ -36,8 +35,7 @@ describe('Translate (e2e)', () => {
     );
 
     const apiBasePath = (process.env.API_BASE_PATH || 'api').replace(/^\/+|\/+$/g, '');
-    const apiVersion = (process.env.API_VERSION || 'v1').replace(/^\/+|\/+$/g, '');
-    app.setGlobalPrefix(`${apiBasePath}/${apiVersion}`);
+    app.setGlobalPrefix(`${apiBasePath}/v1`);
 
     await app.init();
     await app.getHttpAdapter().getInstance().ready();

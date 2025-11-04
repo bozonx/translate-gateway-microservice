@@ -32,7 +32,7 @@ async function bootstrap() {
   );
 
   // Configure global API prefix from configuration
-  const globalPrefix = `${appConfig.apiBasePath}/${appConfig.apiVersion}`;
+  const globalPrefix = `${appConfig.apiBasePath}/v1`;
   app.setGlobalPrefix(globalPrefix);
 
   // Enable graceful shutdown
@@ -51,3 +51,4 @@ async function bootstrap() {
 }
 
 void bootstrap();
+
