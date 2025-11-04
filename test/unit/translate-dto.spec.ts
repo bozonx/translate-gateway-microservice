@@ -25,6 +25,7 @@ describe('TranslateRequestDto validation', () => {
       targetLang: 'fr',
       sourceLang: 'en',
       provider: 'google',
+      model: 'deepseek-chat',
       maxLength: 123,
     });
     const errors = await validate(dto);

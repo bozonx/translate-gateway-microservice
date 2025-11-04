@@ -8,7 +8,7 @@ Production-ready microservice exposing a unified REST API for text translation. 
 - Unified translate endpoint `/{API_BASE_PATH}/v1/translate`
 - Pino logging (JSON in production)
 - Global error filter with consistent error shape
-- Provider abstraction (Google Translate, DeepL)
+- Provider abstraction (Google Translate, DeepL, DeepSeek LLM)
 - Docker-ready
 - Unit and E2E tests
 
@@ -63,6 +63,11 @@ Source of truth: `.env.production.example`.
   - `GOOGLE_APPLICATION_CREDENTIALS` — path to service account JSON (if required)
 - DeepL
   - `DEEPL_AUTH_KEY` — DeepL API key (Free or Pro)
+- DeepSeek (OpenAI-compatible)
+   - `DEEPSEEK_API_KEY` — DeepSeek API key
+   - `DEEPSEEK_API_BASE_URL` — base URL (default `https://api.deepseek.com`)
+   - `DEEPSEEK_DEFAULT_MODEL` — default model (e.g., `deepseek-chat`)
+   - `TRANSLATE_LLM_SYSTEM_PROMPT` — system prompt template for translation (placeholders: `{targetLang}`, `{sourceLang}`, `{format}`)
 
 Notes:
 - This service intentionally omits CORS, Auth, and Rate Limiting. Enforce them at your API Gateway.
@@ -74,7 +79,8 @@ Notes:
     - `text: string` (required)
     - `targetLang: string` (required) — ISO 639-1
     - `sourceLang?: string` (optional)
-    - `provider?: string` (optional) — overrides default provider; options: `google`, `deepl`
+    - `provider?: string` (optional) — overrides default provider; options: `google`, `deepl`, `deepseek`
+    - `model?: string` (optional) — LLM model for `deepseek` provider (default from env `DEEPSEEK_DEFAULT_MODEL`)
     - `maxLength?: number` (optional) — per-request cap; effective limit is `min(ENV, maxLength)`
   - Response body:
     - `translatedText: string`
@@ -134,7 +140,7 @@ services:
 
 ## Limitations
 
-- Providers: Google Translate and DeepL (extensible via provider interface).
+- Providers: Google Translate, DeepL, and DeepSeek (extensible via provider interface).
 - Format detection is heuristic (basic HTML tag detection).
 - No built-in security features; must be handled at the API Gateway layer.
 

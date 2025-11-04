@@ -4,7 +4,7 @@ import { plainToClass } from 'class-transformer';
 
 export class TranslationConfig {
   @IsString()
-  @IsIn(['google', 'deepl'])
+  @IsIn(['google', 'deepl', 'deepseek'])
   public defaultProvider!: string;
 
   @IsInt()

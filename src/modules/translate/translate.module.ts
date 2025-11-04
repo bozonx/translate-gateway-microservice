@@ -3,6 +3,7 @@ import { TranslateController } from './translate.controller';
 import { TranslateService } from './translate.service';
 import { GoogleTranslateProvider } from './providers/google/google-translate.provider';
 import { DeepLTranslateProvider } from './providers/deepl/deepl-translate.provider';
+import { DeepSeekTranslateProvider } from './providers/deepseek/deepseek-translate.provider';
 import { TRANSLATE_PROVIDER_REGISTRY, type TranslateProviderRegistry } from './providers/translate.provider';
 import translationConfig from '@config/translation.config';
 import { ConfigModule } from '@nestjs/config';
@@ -13,18 +14,21 @@ import { ConfigModule } from '@nestjs/config';
   providers: [
     GoogleTranslateProvider,
     DeepLTranslateProvider,
+    DeepSeekTranslateProvider,
     {
       provide: TRANSLATE_PROVIDER_REGISTRY,
       useFactory: (
         google: GoogleTranslateProvider,
         deepl: DeepLTranslateProvider,
+        deepseek: DeepSeekTranslateProvider,
       ): TranslateProviderRegistry => {
         const registry: TranslateProviderRegistry = new Map();
         registry.set('google', google);
         registry.set('deepl', deepl);
+        registry.set('deepseek', deepseek);
         return registry;
       },
-      inject: [GoogleTranslateProvider, DeepLTranslateProvider],
+      inject: [GoogleTranslateProvider, DeepLTranslateProvider, DeepSeekTranslateProvider],
     },
     TranslateService,
   ],

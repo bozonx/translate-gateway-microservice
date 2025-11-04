@@ -54,6 +54,7 @@ export class TranslateService {
           targetLang: dto.targetLang,
           sourceLang: dto.sourceLang,
           format,
+          model: dto.model,
         })
         .then(r => {
           clearTimeout(timer);

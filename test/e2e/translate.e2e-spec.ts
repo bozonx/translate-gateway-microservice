@@ -14,6 +14,9 @@ describe('Translate (e2e)', () => {
   const fakeProvider: TranslateProvider = {
     translate: async ({ text }) => ({ translatedText: `ok:${text}`, provider: 'google' }),
   };
+  const fakeDeepseek: TranslateProvider = {
+    translate: async ({ text }) => ({ translatedText: `ds:${text}`, provider: 'deepseek', model: 'deepseek-chat' }),
+  };
 
   async function createApp(): Promise<NestFastifyApplication> {
     // Ensure defaults the same as in main.ts and test factory
@@ -75,5 +78,68 @@ describe('Translate (e2e)', () => {
     expect(res.statusCode).toBe(400);
     const body = JSON.parse(res.body);
     expect(body.message).toBeDefined();
+  });
+
+  it('allows selecting deepseek provider when available', async () => {
+    // Build app with both providers in registry
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(TRANSLATE_PROVIDER_REGISTRY)
+      .useValue(makeRegistry({ google: fakeProvider, deepseek: fakeDeepseek }))
+      .compile();
+
+    const localApp = moduleRef.createNestApplication<NestFastifyApplication>(
+      new FastifyAdapter({ logger: false }),
+    );
+    localApp.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+    const apiBasePath = (process.env.API_BASE_PATH || 'api').replace(/^\/+|\/+$/g, '');
+    localApp.setGlobalPrefix(`${apiBasePath}/v1`);
+    await localApp.init();
+    await localApp.getHttpAdapter().getInstance().ready();
+
+    const res = await localApp.inject({
+      method: 'POST',
+      url: '/api/v1/translate',
+      payload: { text: 'hello', targetLang: 'ru', provider: 'deepseek' },
+    });
+    expect(res.statusCode).toBe(201);
+    const body = JSON.parse(res.body);
+    expect(body.translatedText).toBe('ds:hello');
+    expect(body.provider).toBe('deepseek');
+
+    await localApp.close();
+  });
+
+  it('returns 404 when provider not in allow-list', async () => {
+    // Restrict allow-list to google only
+    const oldEnv = process.env.TRANSLATE_ALLOWED_PROVIDERS;
+    process.env.TRANSLATE_ALLOWED_PROVIDERS = 'google';
+
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(TRANSLATE_PROVIDER_REGISTRY)
+      .useValue(makeRegistry({ google: fakeProvider, deepseek: fakeDeepseek }))
+      .compile();
+
+    const localApp = moduleRef.createNestApplication<NestFastifyApplication>(
+      new FastifyAdapter({ logger: false }),
+    );
+    localApp.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+    const apiBasePath = (process.env.API_BASE_PATH || 'api').replace(/^\/+|\/+$/g, '');
+    localApp.setGlobalPrefix(`${apiBasePath}/v1`);
+    await localApp.init();
+    await localApp.getHttpAdapter().getInstance().ready();
+
+    const res = await localApp.inject({
+      method: 'POST',
+      url: '/api/v1/translate',
+      payload: { text: 'hello', targetLang: 'ru', provider: 'deepseek' },
+    });
+    expect(res.statusCode).toBe(404);
+
+    await localApp.close();
+    process.env.TRANSLATE_ALLOWED_PROVIDERS = oldEnv;
   });
 });

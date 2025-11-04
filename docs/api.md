@@ -14,7 +14,8 @@ Request body (JSON):
 - `text: string` — required. Source text.
 - `targetLang: string` — required. Target language (ISO 639-1), e.g., `en`, `ru`.
 - `sourceLang?: string` — optional. Source language; if omitted, provider may detect it.
-- `provider?: string` — необязательно. Имя провайдера (по умолчанию — `TRANSLATE_DEFAULT_PROVIDER`). Поддерживаются: `google`, `deepl`.
+- `provider?: string` — необязательно. Имя провайдера (по умолчанию — `TRANSLATE_DEFAULT_PROVIDER`). Поддерживаются: `google`, `deepl`, `deepseek`.
+- `model?: string` — необязательно. Имя модели для LLM‑провайдера (например, `deepseek-chat`). Если не указано — используется `DEEPSEEK_DEFAULT_MODEL`.
 - `maxLength?: number` — optional. Per-request max input length. Effective limit: `min(TRANSLATE_MAX_TEXT_LENGTH, maxLength)`.
 
 Behavior & format:
@@ -30,6 +31,7 @@ Response (JSON):
 
 - `translatedText: string`
 - `provider: string`
+- `model?: string`
 
 Success example (200):
 
@@ -124,6 +126,11 @@ Common cases:
 - `REQUEST_TIMEOUT_SEC` — timeout for provider requests (default: `60`).
 - Google ADC: set `GOOGLE_APPLICATION_CREDENTIALS` if needed (path to service account JSON).
 - DeepL: укажите `DEEPL_AUTH_KEY` — ключ API DeepL.
+- DeepSeek (OpenAI‑совместимый):
+  - `DEEPSEEK_API_KEY` — ключ API
+  - `DEEPSEEK_API_BASE_URL` — базовый URL (по умолчанию: `https://api.deepseek.com`)
+  - `DEEPSEEK_DEFAULT_MODEL` — модель по умолчанию (например, `deepseek-chat`)
+  - `TRANSLATE_LLM_SYSTEM_PROMPT` — шаблон системного сообщения для перевода (`{targetLang}`, `{sourceLang}`, `{format}`)
 
 See `README.md` for configuration and Docker details.
 

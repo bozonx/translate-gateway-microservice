@@ -3,6 +3,7 @@ export interface TranslateParams {
   targetLang: string;
   sourceLang?: string;
   format?: 'text' | 'html';
+  model?: string;
 }
 
 export interface TranslateResult {

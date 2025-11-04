@@ -55,6 +55,13 @@ describe('TranslateService (unit)', () => {
     expect(res.provider).toBe('google');
   });
 
+  it('passes model from request to provider', async () => {
+    (fakeProvider.translate as jest.Mock).mockClear();
+    await service.translate({ text: 'x', targetLang: 'ru', model: 'deepseek-chat' });
+    const callArg = (fakeProvider.translate as jest.Mock).mock.calls.at(-1)?.[0];
+    expect(callArg.model).toBe('deepseek-chat');
+  });
+
   it('throws 413 when text exceeds effective max', async () => {
     await expect(
       service.translate({ text: '01234567890', targetLang: 'ru' }) // length 11 > env 10
