@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, UnprocessableEntityException } from '@nestjs/common';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppModule } from '@/app.module';
 import { TRANSLATE_PROVIDER_REGISTRY, type TranslateProvider, type TranslateProviderRegistry } from '@/modules/translate/providers/translate.provider';
@@ -10,6 +10,19 @@ function makeRegistry(map: Record<string, TranslateProvider>): TranslateProvider
 
 describe('Translate (e2e)', () => {
   let app: NestFastifyApplication;
+  let savedEnv: {
+    TRANSLATE_DEFAULT_PROVIDER?: string;
+    TRANSLATE_ALLOWED_PROVIDERS?: string;
+    REQUEST_TIMEOUT_SEC?: string;
+  };
+
+  beforeAll(() => {
+    savedEnv = {
+      TRANSLATE_DEFAULT_PROVIDER: process.env.TRANSLATE_DEFAULT_PROVIDER,
+      TRANSLATE_ALLOWED_PROVIDERS: process.env.TRANSLATE_ALLOWED_PROVIDERS,
+      REQUEST_TIMEOUT_SEC: process.env.REQUEST_TIMEOUT_SEC,
+    };
+  });
 
   const fakeProvider: TranslateProvider = {
     translate: async ({ text }) => ({ translatedText: `ok:${text}`, provider: 'google' }),
@@ -49,7 +62,16 @@ describe('Translate (e2e)', () => {
   }
 
   beforeEach(async () => {
+    process.env.TRANSLATE_DEFAULT_PROVIDER = 'google';
+    process.env.TRANSLATE_ALLOWED_PROVIDERS = '';
+    process.env.REQUEST_TIMEOUT_SEC = '60';
     app = await createApp();
+  });
+
+  afterAll(async () => {
+    process.env.TRANSLATE_DEFAULT_PROVIDER = savedEnv.TRANSLATE_DEFAULT_PROVIDER;
+    process.env.TRANSLATE_ALLOWED_PROVIDERS = savedEnv.TRANSLATE_ALLOWED_PROVIDERS;
+    process.env.REQUEST_TIMEOUT_SEC = savedEnv.REQUEST_TIMEOUT_SEC;
   });
 
   it('allows selecting openrouter provider when available', async () => {
@@ -174,5 +196,145 @@ describe('Translate (e2e)', () => {
 
     await localApp.close();
     process.env.TRANSLATE_ALLOWED_PROVIDERS = oldEnv;
+  });
+
+  it('normalizes language tag casing for sourceLang/targetLang', async () => {
+    const echoProvider: TranslateProvider = {
+      translate: async ({ text, targetLang, sourceLang }) => ({
+        translatedText: `t=${targetLang};s=${sourceLang ?? ''};${text}`,
+        provider: 'google',
+      }),
+    };
+
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(TRANSLATE_PROVIDER_REGISTRY)
+      .useValue(makeRegistry({ google: echoProvider }))
+      .compile();
+
+    const localApp = moduleRef.createNestApplication<NestFastifyApplication>(
+      new FastifyAdapter({ logger: false }),
+    );
+    localApp.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
+    );
+    const apiBasePath = (process.env.API_BASE_PATH || 'api').replace(/^\/+|\/+$/g, '');
+    localApp.setGlobalPrefix(`${apiBasePath}/v1`);
+    await localApp.init();
+    await localApp.getHttpAdapter().getInstance().ready();
+
+    const cases = [
+      { target: 'en', expectT: 'en' },
+      { target: 'EN-us', expectT: 'en-US' },
+      { target: 'en-gb', expectT: 'en-GB' },
+      { target: 'pt', expectT: 'pt' },
+      { target: 'pt-br', expectT: 'pt-BR' },
+      { target: 'zh', expectT: 'zh' },
+      { target: 'zh-tw', expectT: 'zh-TW' },
+    ];
+
+    for (const c of cases) {
+      const res = await localApp.inject({
+        method: 'POST',
+        url: '/api/v1/translate',
+        payload: { text: 'x', targetLang: c.target },
+      });
+      expect(res.statusCode).toBe(201);
+      const body = JSON.parse(res.body);
+      expect(body.translatedText.startsWith(`t=${c.expectT};s=;`)).toBe(true);
+    }
+
+    // Also check sourceLang normalization
+    const res2 = await localApp.inject({
+      method: 'POST',
+      url: '/api/v1/translate',
+      payload: { text: 'y', targetLang: 'EN-us', sourceLang: 'ZH-tw' },
+    });
+    expect(res2.statusCode).toBe(201);
+    const body2 = JSON.parse(res2.body);
+    expect(body2.translatedText).toContain('t=en-US;');
+    expect(body2.translatedText).toContain('s=zh-TW;');
+
+    await localApp.close();
+  });
+
+  it('returns 503 on provider timeout', async () => {
+    const slowProvider: TranslateProvider = {
+      translate: async ({ text }) => {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        return { translatedText: `slow:${text}`, provider: 'google' };
+      },
+    };
+
+    const oldTimeout = process.env.REQUEST_TIMEOUT_SEC;
+    process.env.REQUEST_TIMEOUT_SEC = '1';
+
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(TRANSLATE_PROVIDER_REGISTRY)
+      .useValue(makeRegistry({ google: slowProvider }))
+      .compile();
+
+    const localApp = moduleRef.createNestApplication<NestFastifyApplication>(
+      new FastifyAdapter({ logger: false }),
+    );
+    localApp.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
+    );
+    const apiBasePath = (process.env.API_BASE_PATH || 'api').replace(/^\/+|\/+$/g, '');
+    localApp.setGlobalPrefix(`${apiBasePath}/v1`);
+    await localApp.init();
+    await localApp.getHttpAdapter().getInstance().ready();
+
+    const res = await localApp.inject({
+      method: 'POST',
+      url: '/api/v1/translate',
+      payload: { text: 'hello', targetLang: 'ru' },
+    });
+
+    expect(res.statusCode).toBe(503);
+
+    await localApp.close();
+    process.env.REQUEST_TIMEOUT_SEC = oldTimeout;
+  });
+
+  it('returns 422 when provider rejects unsupported language variant', async () => {
+    const rejectingProvider: TranslateProvider = {
+      translate: async ({ targetLang }) => {
+        if (targetLang === 'zz-ZZ') {
+          throw new UnprocessableEntityException({ message: 'Unsupported language' });
+        }
+        return { translatedText: 'ok', provider: 'google' };
+      },
+    };
+
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    })
+      .overrideProvider(TRANSLATE_PROVIDER_REGISTRY)
+      .useValue(makeRegistry({ google: rejectingProvider }))
+      .compile();
+
+    const localApp = moduleRef.createNestApplication<NestFastifyApplication>(
+      new FastifyAdapter({ logger: false }),
+    );
+    localApp.useGlobalPipes(
+      new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
+    );
+    const apiBasePath = (process.env.API_BASE_PATH || 'api').replace(/^\/+|\/+$/g, '');
+    localApp.setGlobalPrefix(`${apiBasePath}/v1`);
+    await localApp.init();
+    await localApp.getHttpAdapter().getInstance().ready();
+
+    const res = await localApp.inject({
+      method: 'POST',
+      url: '/api/v1/translate',
+      payload: { text: 'hello', targetLang: 'zz-zz' },
+    });
+    expect(res.statusCode).toBe(422);
+
+    await localApp.close();
   });
 });

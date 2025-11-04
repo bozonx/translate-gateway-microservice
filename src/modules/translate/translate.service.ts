@@ -5,6 +5,7 @@ import type { TranslateProviderRegistry } from './providers/translate.provider';
 import { TRANSLATE_PROVIDER_REGISTRY } from './providers/translate.provider';
 import type { TranslateRequestDto } from './dto/translate-request.dto';
 import type { TranslateResponseDto } from './dto/translate-response.dto';
+import { normalizeBcp47Case } from '@/utils/lang.util';
 
 @Injectable()
 export class TranslateService {
@@ -43,6 +44,9 @@ export class TranslateService {
     const format = this.detectFormat(dto.text);
 
     const timeoutMs = Math.max(1, translationConfig.requestTimeoutSec) * 1000;
+    const normalizedTarget = normalizeBcp47Case(dto.targetLang);
+    const normalizedSource = dto.sourceLang ? normalizeBcp47Case(dto.sourceLang) : undefined;
+
     const result = (await new Promise<TranslateResponseDto>((resolve, reject) => {
       const timer = setTimeout(
         () => reject(new ServiceUnavailableException({ message: 'Provider request timed out', provider: providerName, timeoutSec: translationConfig.requestTimeoutSec })),
@@ -51,8 +55,8 @@ export class TranslateService {
       provider
         .translate({
           text: dto.text,
-          targetLang: dto.targetLang,
-          sourceLang: dto.sourceLang,
+          targetLang: normalizedTarget,
+          sourceLang: normalizedSource,
           format,
           model: dto.model,
         })
