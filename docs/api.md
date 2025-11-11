@@ -46,7 +46,7 @@ Examples:
 
 ```bash
 # Basic text translation (auto-detects format)
-curl -s -X POST 'http://localhost:80/api/v1/translate' \
+curl -s -X POST 'http://localhost:8080/api/v1/translate' \
   -H 'Content-Type: application/json' \
   -d '{
         "text": "Hello, world!",
@@ -54,7 +54,7 @@ curl -s -X POST 'http://localhost:80/api/v1/translate' \
       }'
 
 # Translate HTML and explicitly select provider
-curl -s -X POST 'http://localhost:80/api/v1/translate' \
+curl -s -X POST 'http://localhost:8080/api/v1/translate' \
   -H 'Content-Type: application/json' \
   -d '{
         "text": "<p>Hello, <b>world</b>!</p>",
@@ -63,7 +63,7 @@ curl -s -X POST 'http://localhost:80/api/v1/translate' \
       }'
 
 # With per-request length cap
-curl -s -X POST 'http://localhost:80/api/v1/translate' \
+curl -s -X POST 'http://localhost:8080/api/v1/translate' \
   -H 'Content-Type: application/json' \
   -d '{
         "text": "...",
@@ -86,7 +86,7 @@ curl -s -X POST 'http://localhost:80/api/v1/translate' \
 Simple service liveness/readiness check.
 
 ```bash
-curl -s 'http://localhost:80/api/v1/health'
+curl -s 'http://localhost:8080/api/v1/health'
 ```
 
 Response:

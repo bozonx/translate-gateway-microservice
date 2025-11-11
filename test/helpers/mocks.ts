@@ -37,7 +37,7 @@ export const createMockLogger = (): PinoLogger =>
  *
  * @example
  * const mockConfig = createMockConfigService({
- *   'app.port': 3000,
+ *   'app.port': 8080,
  *   'app.logLevel': 'debug'
  * });
  */

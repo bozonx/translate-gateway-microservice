@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Default listen port unified to `8080` across dev/prod and Docker
+  - Changed app default fallback from `80` to `8080`
+  - Updated `.env.*.example` to `LISTEN_PORT=8080`
+  - Dockerfile `EXPOSE 8080` and healthcheck defaults now use 8080
+  - docker-compose maps `8080:8080`
+  - README and API docs examples updated to `http://localhost:8080/...`
+
 - README refocused for production usage (dev instructions removed)
 - Added `docs/dev.md` with development and dev-mode instructions
 - Clarified production URLs and Docker Compose example in README

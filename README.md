@@ -33,7 +33,7 @@ pnpm build
 pnpm start:prod
 ```
 
-Default URL (prod): `http://localhost:80/api/v1`
+Default URL (prod): `http://localhost:8080/api/v1`
 Docker Compose: `http://localhost:8080/api/v1`
 
 ## Documentation
@@ -49,7 +49,7 @@ Source of truth: `.env.production.example`.
 - App
   - `NODE_ENV` = `production|development|test`
   - `LISTEN_HOST` (e.g. `0.0.0.0`)
-  - `LISTEN_PORT` (e.g. `80`)
+  - `LISTEN_PORT` (e.g. `8080`)
   - `API_BASE_PATH` (default `api`)
   - `LOG_LEVEL` = `trace|debug|info|warn|error|fatal|silent` (prod default `warn`)
   - `TZ` (default `UTC`)
@@ -98,7 +98,7 @@ Notes:
 Example:
 
 ```bash
-curl -s -X POST 'http://localhost:80/api/v1/translate' \
+curl -s -X POST 'http://localhost:8080/api/v1/translate' \
   -H 'Content-Type: application/json' \
   -d '{
         "text": "<p>Hello, world!</p>",
@@ -116,11 +116,11 @@ services:
   translate-gateway-microservice:
     image: ghcr.io/bozonx/translate-gateway-microservice:latest
     ports:
-      - '8080:80'
+      - '8080:8080'
     environment:
       - NODE_ENV=production
       - LISTEN_HOST=0.0.0.0
-      - LISTEN_PORT=80
+      - LISTEN_PORT=8080
       - API_BASE_PATH=api
       - LOG_LEVEL=warn
       - TRANSLATE_DEFAULT_PROVIDER=google

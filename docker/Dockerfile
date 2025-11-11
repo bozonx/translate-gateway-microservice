@@ -5,7 +5,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV LISTEN_HOST=0.0.0.0
-ENV LISTEN_PORT=80
+ENV LISTEN_PORT=8080
 ENV TZ=UTC
 ENV LOG_LEVEL=warn
 
@@ -19,11 +19,11 @@ RUN pnpm install --prod --frozen-lockfile --prefer-offline || pnpm install --pro
 # Copy pre-built application
 COPY dist ./dist
 
-EXPOSE 80
+EXPOSE 8080
 
 # Built-in container healthcheck
-# Uses env variables with defaults: LISTEN_PORT (80) and API_BASE_PATH (api)
+# Uses env variables with defaults: LISTEN_PORT (8080) and API_BASE_PATH (api)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:${LISTEN_PORT:-80}/${API_BASE_PATH:-api}/v1/health || exit 1
+  CMD wget -qO- http://127.0.0.1:${LISTEN_PORT:-8080}/${API_BASE_PATH:-api}/v1/health || exit 1
 
 CMD ["node", "dist/src/main.js"]
