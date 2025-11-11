@@ -21,4 +21,9 @@ COPY dist ./dist
 
 EXPOSE 80
 
+# Built-in container healthcheck
+# Uses env variables with defaults: LISTEN_PORT (80) and API_BASE_PATH (api)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget -qO- http://127.0.0.1:${LISTEN_PORT:-80}/${API_BASE_PATH:-api}/v1/health || exit 1
+
 CMD ["node", "dist/src/main.js"]

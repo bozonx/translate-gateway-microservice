@@ -8,7 +8,7 @@ Production-ready microservice exposing a unified REST API for text translation. 
 - Unified translate endpoint `/{API_BASE_PATH}/v1/translate`
 - Pino logging (JSON in production)
 - Global error filter with consistent error shape
-- Provider abstraction (Google Translate, DeepL, DeepSeek LLM)
+- Provider abstraction (Google Translate, DeepL, DeepSeek LLM, OpenRouter)
 - Docker-ready
 - Unit and E2E tests
 
@@ -68,6 +68,10 @@ Source of truth: `.env.production.example`.
    - `DEEPSEEK_API_BASE_URL` — base URL (default `https://api.deepseek.com`)
    - `DEEPSEEK_DEFAULT_MODEL` — default model (e.g., `deepseek-chat`)
    - `TRANSLATE_LLM_SYSTEM_PROMPT` — system prompt template for translation (placeholders: `{targetLang}`, `{sourceLang}`, `{format}`)
+ - OpenRouter (OpenAI-compatible)
+   - `OPENROUTER_API_KEY` — OpenRouter API key
+   - `OPENROUTER_API_BASE_URL` — base URL (default `https://openrouter.ai/api/v1`)
+   - `OPENROUTER_DEFAULT_MODEL` — default model (e.g., `openrouter/auto`)
 
 Notes:
 - This service intentionally omits CORS, Auth, and Rate Limiting. Enforce them at your API Gateway.
@@ -79,12 +83,14 @@ Notes:
     - `text: string` (required)
     - `targetLang: string` (required) — ISO 639-1
     - `sourceLang?: string` (optional)
-    - `provider?: string` (optional) — overrides default provider; options: `google`, `deepl`, `deepseek`
-    - `model?: string` (optional) — LLM model for `deepseek` provider (default from env `DEEPSEEK_DEFAULT_MODEL`)
+    - `provider?: string` (optional) — overrides default provider; options: `google`, `deepl`, `deepseek`, `openrouter`
+    - `model?: string` (optional) — LLM model for `deepseek` or `openrouter` providers (defaults from env `DEEPSEEK_DEFAULT_MODEL` / `OPENROUTER_DEFAULT_MODEL`)
     - `maxLength?: number` (optional) — per-request cap; effective limit is `min(ENV, maxLength)`
   - Response body:
     - `translatedText: string`
     - `provider: string`
+  - Status:
+    - Returns `201 Created` on success (NestJS default for POST)
   - Behavior:
     - Output format mirrors input. A simple heuristic detects HTML and passes `text|html` to the provider.
     - Language validity is delegated to provider; this service does not validate language codes.

@@ -13,9 +13,9 @@ Request body (JSON):
 
 - `text: string` — required. Source text.
 - `targetLang: string` — required. Target language (ISO 639-1), e.g., `en`, `ru`.
-- `sourceLang?: string` — optional. Source language; if omitted, provider may detect it.
-- `provider?: string` — необязательно. Имя провайдера (по умолчанию — `TRANSLATE_DEFAULT_PROVIDER`). Поддерживаются: `google`, `deepl`, `deepseek`, `openrouter`.
-- `model?: string` — необязательно. Имя модели для LLM‑провайдера (например, `deepseek-chat`). Если не указано — используется `DEEPSEEK_DEFAULT_MODEL`.
+ `sourceLang?: string` — optional. Source language; if omitted, the provider may detect it.
+ `provider?: string` — optional. Provider name (defaults to `TRANSLATE_DEFAULT_PROVIDER`). Supported: `google`, `deepl`, `deepseek`, `openrouter`.
+ `model?: string` — optional. Model name for LLM providers (DeepSeek or OpenRouter). If omitted, a provider-specific default will be used (`DEEPSEEK_DEFAULT_MODEL` or `OPENROUTER_DEFAULT_MODEL`).
 - `maxLength?: number` — optional. Per-request max input length. Effective limit: `min(TRANSLATE_MAX_TEXT_LENGTH, maxLength)`.
 
 Behavior & format:
@@ -33,11 +33,11 @@ Response (JSON):
 - `provider: string`
 - `model?: string`
 
-Success example (200):
+Success example (201):
 
 ```json
 {
-  "translatedText": "Привет, мир!",
+  "translatedText": "Hello, world!",
   "provider": "google"
 }
 ```
@@ -74,7 +74,7 @@ curl -s -X POST 'http://localhost:80/api/v1/translate' \
 
 ## Status Codes
 
-- `200 OK` — translation successful.
+- `201 Created` — translation successful (default for POST `/translate`).
 - `400 Bad Request` — invalid payload (e.g., `text`/`targetLang` not strings).
 - `404 Not Found` — unknown provider.
 - `413 Payload Too Large` — input exceeds the effective limit.
@@ -125,16 +125,16 @@ Common cases:
 - `TRANSLATE_ALLOWED_PROVIDERS` — comma-separated allow-list; if empty, all providers are allowed.
 - `REQUEST_TIMEOUT_SEC` — timeout for provider requests (default: `60`).
 - Google ADC: set `GOOGLE_APPLICATION_CREDENTIALS` if needed (path to service account JSON).
-- DeepL: укажите `DEEPL_AUTH_KEY` — ключ API DeepL.
-- DeepSeek (OpenAI‑совместимый):
-  - `DEEPSEEK_API_KEY` — ключ API
-  - `DEEPSEEK_API_BASE_URL` — базовый URL (по умолчанию: `https://api.deepseek.com`)
-  - `DEEPSEEK_DEFAULT_MODEL` — модель по умолчанию (например, `deepseek-chat`)
-  - `TRANSLATE_LLM_SYSTEM_PROMPT` — шаблон системного сообщения для перевода (`{targetLang}`, `{sourceLang}`, `{format}`)
-- OpenRouter (OpenAI‑совместимый):
-  - `OPENROUTER_API_KEY` — ключ API
-  - `OPENROUTER_API_BASE_URL` — базовый URL (по умолчанию: `https://openrouter.ai/api/v1`)
-  - `OPENROUTER_DEFAULT_MODEL` — модель по умолчанию (например, `openrouter/auto`)
+- DeepL: set `DEEPL_AUTH_KEY` — DeepL API key.
+- DeepSeek (OpenAI‑compatible):
+  - `DEEPSEEK_API_KEY` — API key
+  - `DEEPSEEK_API_BASE_URL` — base URL (default: `https://api.deepseek.com`)
+  - `DEEPSEEK_DEFAULT_MODEL` — default model (e.g., `deepseek-chat`)
+  - `TRANSLATE_LLM_SYSTEM_PROMPT` — system prompt template for translation (`{targetLang}`, `{sourceLang}`, `{format}`)
+- OpenRouter (OpenAI‑compatible):
+  - `OPENROUTER_API_KEY` — API key
+  - `OPENROUTER_API_BASE_URL` — base URL (default: `https://openrouter.ai/api/v1`)
+  - `OPENROUTER_DEFAULT_MODEL` — default model (e.g., `openrouter/auto`)
 
 See `README.md` for configuration and Docker details.
 
