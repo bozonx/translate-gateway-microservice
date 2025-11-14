@@ -18,12 +18,12 @@ export class DeepLTranslateProvider implements TranslateProvider {
 
     const { text, targetLang, sourceLang, format } = params;
 
-    const options: deepl.TextTranslationOptions = {};
+    const options: any = {};
     if (format === 'html') {
       options.tagHandling = 'html';
     }
 
-    const result = await this.client.translateText(text, sourceLang ?? null, targetLang as any, options);
+    const result = await this.client.translateText(text, (sourceLang ?? null) as any, targetLang as any, options);
 
     return {
       translatedText: result.text,
