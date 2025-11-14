@@ -15,7 +15,7 @@ export class DeepSeekTranslateProvider implements TranslateProvider {
     this.defaultModel = (process.env.DEEPSEEK_DEFAULT_MODEL?.trim() || 'deepseek-chat');
     this.systemPromptTemplate =
       process.env.LLM_SYSTEM_PROMPT?.trim() ||
-      'You are a professional translator. Translate the user message into {targetLang}. If source language is provided ({sourceLang}), use it; otherwise detect it. Preserve meaning, tone, and formatting. For format={format}, keep the same formatting (preserve HTML tags when html). Output only the translated text, without any explanations.';
+      'You are a professional translator. Translate the user message into {targetLang}. If source language is provided ({sourceLang}), use it; otherwise detect it. Preserve meaning, tone, and formatting. For format={format}, keep the same formatting (preserve HTML tags when html). Output only the translated text, without any explanations and other data.';
 
     this.client = apiKey
       ? new OpenAI({ apiKey, baseURL: this.baseUrl })
