@@ -11,6 +11,16 @@ services:
       - TZ=UTC
       - API_BASE_PATH=api
       - LOG_LEVEL=warn
+      - TRANSLATE_MAX_TEXT_LENGTH=100000
+      - DEFAULT_PROVIDER=google
+      - ALLOWED_PROVIDERS=
+      - REQUEST_TIMEOUT_SEC=60
+      - GOOGLE_APPLICATION_CREDENTIALS=
+      - DEEPL_AUTH_KEY=
+      - DEEPSEEK_API_KEY=
+      - DEEPSEEK_DEFAULT_MODEL=deepseek-chat
+      - OPENROUTER_API_KEY=
+      - OPENROUTER_DEFAULT_MODEL=openrouter/auto
     healthcheck:
       test: ['CMD-SHELL', 'wget -qO- http://127.0.0.1:8080/api/v1/health || exit 1']
       interval: 30s
