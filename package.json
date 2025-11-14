@@ -1,6 +1,6 @@
 {
   "name": "translate-gateway-microservice",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Translation gateway microservice",
   "main": "dist/src/main.js",
   "scripts": {
