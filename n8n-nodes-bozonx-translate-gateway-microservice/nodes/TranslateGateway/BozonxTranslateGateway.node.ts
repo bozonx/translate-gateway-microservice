@@ -51,7 +51,7 @@ export class BozonxTranslateGateway implements INodeType {
 				displayName: 'Target Language',
 				name: 'targetLang',
 				type: 'string',
-				default: 'en',
+				default: '',
 				required: true,
 				description: 'Target language code (ISO 639-1), e.g., en, ru, es, fr, de',
 				placeholder: 'en',
@@ -141,9 +141,7 @@ export class BozonxTranslateGateway implements INodeType {
 				const model = this.getNodeParameter('model', i) as string;
 				const maxLength = this.getNodeParameter('maxLength', i) as number;
 				const normalizedBasePath = rawBasePath.trim().replace(/^\/+|\/+$/g, '');
-				const endpointPath = normalizedBasePath
-					? `/${normalizedBasePath}/translate`
-					: '/translate';
+				const endpointPath = normalizedBasePath ? `/${normalizedBasePath}/translate` : '/translate';
 
 				// Build request body
 				const body: IDataObject = {
