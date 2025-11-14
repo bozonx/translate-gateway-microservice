@@ -150,11 +150,15 @@ services:
 - Format detection is heuristic (basic HTML tag detection).
 - No built-in security features; must be handled at the API Gateway layer.
 
-# Development guide
+## Development
 
-Development documentation has moved to the STT Gateway repository to avoid duplication.
+- pnpm install
+- cp env.development.example .env.development
+- pnpm start:dev
 
-Please see: `stt-gateway-microservice/docs/dev.md`.
+Notes:
+- Use LISTEN_PORT=8080 and API_BASE_PATH=api by default.
+- Unit tests: pnpm test:unit. E2E tests: pnpm test:e2e.
 
 ## License
 

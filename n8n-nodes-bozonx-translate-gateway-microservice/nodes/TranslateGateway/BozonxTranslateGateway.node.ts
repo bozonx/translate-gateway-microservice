@@ -165,13 +165,19 @@ export class BozonxTranslateGateway implements INodeType {
 					body.maxLength = maxLength;
 				}
 
-				// Make API request
+				// Build base URL from credentials and make API request
+				const credentials = await this.getCredentials('bozonxMicroservicesApi');
+				const gatewayUrl = ((credentials?.gatewayUrl as string) || '')
+					.trim()
+					.replace(/\/+$|\/$/g, '');
+				const url = `${gatewayUrl}${endpointPath}`;
+
 				const response = (await this.helpers.httpRequestWithAuthentication.call(
 					this,
 					'bozonxMicroservicesApi',
 					{
 						method: 'POST',
-						url: endpointPath,
+						url,
 						body,
 						json: true,
 					},
