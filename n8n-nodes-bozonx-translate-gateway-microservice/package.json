@@ -1,0 +1,56 @@
+{
+    "name": "n8n-nodes-bozonx-translate-gateway-microservice",
+    "version": "1.0.0",
+    "description": "n8n node for synchronous translation via Translate Gateway microservice (AssemblyAI)",
+    "license": "MIT",
+    "homepage": "https://github.com/bozonx/translate-gateway-microservice/tree/main/n8n-nodes-bozonx-translate-gateway-microservice#readme",
+    "keywords": [
+        "n8n-community-node-package",
+        "n8n-nodes",
+        "speech-to-text",
+        "stt",
+        "assemblyai",
+        "bozonx"
+    ],
+    "author": {
+        "name": "Ivan",
+        "email": "ipkozyrin@gmail.com"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/bozonx/translate-gateway-microservice"
+    },
+   "scripts": {
+    "build": "n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "release:n8n": "n8n-node release",
+    "prepublishOnly:n8n": "n8n-node prerelease",
+    "publish:npm": "pnpm build && pnpm publish --access public"
+	},
+    "files": [
+        "dist"
+    ],
+    "n8n": {
+      "n8nNodesApiVersion": 1,
+      "strict": true,
+      "nodes": [
+          "dist/nodes/TranslateGateway/BozonxTranslateGateway.node.js"
+      ],
+      "credentials": [
+          "dist/credentials/BozonxMicroservicesApi.credentials.js"
+      ]
+  },
+    "devDependencies": {
+        "@n8n/node-cli": "*",
+        "eslint": "9.32.0",
+        "prettier": "3.6.2",
+        "release-it": "^19.0.4",
+        "typescript": "5.9.2"
+    },
+    "peerDependencies": {
+        "n8n-workflow": "*"
+    }
+}
