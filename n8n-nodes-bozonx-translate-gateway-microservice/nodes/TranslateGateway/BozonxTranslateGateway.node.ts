@@ -12,6 +12,7 @@ export class BozonxTranslateGateway implements INodeType {
 		name: 'bozonxTranslateGateway',
 		icon: 'file:translate-gateway.svg',
 		group: ['transform'],
+		usableAsTool: true,
 		version: 1,
 		subtitle: '={{$parameter["provider"] || "default"}} provider',
 		description: 'Translate text using Translate Gateway microservice',
@@ -71,16 +72,6 @@ export class BozonxTranslateGateway implements INodeType {
 				type: 'options',
 				options: [
 					{
-						name: 'Default',
-						value: '',
-						description: 'Use the default provider configured in the microservice',
-					},
-					{
-						name: 'Google',
-						value: 'google',
-						description: 'Google Cloud Translation API',
-					},
-					{
 						name: 'DeepL',
 						value: 'deepl',
 						description: 'DeepL Translation API',
@@ -89,6 +80,16 @@ export class BozonxTranslateGateway implements INodeType {
 						name: 'DeepSeek',
 						value: 'deepseek',
 						description: 'DeepSeek LLM (OpenAI-compatible)',
+					},
+					{
+						name: 'Default',
+						value: '',
+						description: 'Use the default provider configured in the microservice',
+					},
+					{
+						name: 'Google',
+						value: 'google',
+						description: 'Google Cloud Translation API',
 					},
 					{
 						name: 'OpenRouter',
