@@ -53,11 +53,11 @@ Source of truth: `.env.production.example`.
   - `API_BASE_PATH` (default `api`)
   - `LOG_LEVEL` = `trace|debug|info|warn|error|fatal|silent` (prod default `warn`)
   - `TZ` (default `UTC`)
-  - `HTTP_REQUEST_BODY_LIMIT_MB` (default `10`) — max HTTP request body size (MB) for Fastify body parser
+  - `HTTP_REQUEST_BODY_LIMIT_MB` (default `3`) — max HTTP request body size (MB) for Fastify body parser
 - Translation
-  - `TRANSLATE_DEFAULT_PROVIDER` (default `google`)
-  - `TRANSLATE_MAX_TEXT_LENGTH` (default `5000`) — hard cap for input text length
-  - `TRANSLATE_ALLOWED_PROVIDERS` — comma-separated allow-list; if empty, all providers are allowed
+  - `DEFAULT_PROVIDER` (default `google`)
+  - `TRANSLATE_MAX_TEXT_LENGTH` (default `100000`) — hard cap for input text length
+  - `ALLOWED_PROVIDERS` — comma-separated allow-list; if empty, all providers are allowed
   - `REQUEST_TIMEOUT_SEC` (default `60`) — timeout for provider requests
 - Google Translate (ADC)
   - `GOOGLE_APPLICATION_CREDENTIALS` — path to service account JSON (if required)
@@ -67,7 +67,7 @@ Source of truth: `.env.production.example`.
    - `DEEPSEEK_API_KEY` — DeepSeek API key
    - `DEEPSEEK_API_BASE_URL` — base URL (default `https://api.deepseek.com`)
    - `DEEPSEEK_DEFAULT_MODEL` — default model (e.g., `deepseek-chat`)
-   - `TRANSLATE_LLM_SYSTEM_PROMPT` — system prompt template for translation (placeholders: `{targetLang}`, `{sourceLang}`, `{format}`)
+   - `LLM_SYSTEM_PROMPT` — system prompt template for translation (placeholders: `{targetLang}`, `{sourceLang}`, `{format}`)
  - OpenRouter (OpenAI-compatible)
    - `OPENROUTER_API_KEY` — OpenRouter API key
    - `OPENROUTER_API_BASE_URL` — base URL (default `https://openrouter.ai/api/v1`)
@@ -123,8 +123,8 @@ services:
       - LISTEN_PORT=8080
       - API_BASE_PATH=api
       - LOG_LEVEL=warn
-      - TRANSLATE_DEFAULT_PROVIDER=google
-      - TRANSLATE_MAX_TEXT_LENGTH=5000
+      - DEFAULT_PROVIDER=google
+      - TRANSLATE_MAX_TEXT_LENGTH=100000
       # If using Google ADC credentials inside container
       # - GOOGLE_APPLICATION_CREDENTIALS=/secrets/gcp-service-account.json
     # Example secret mount for ADC

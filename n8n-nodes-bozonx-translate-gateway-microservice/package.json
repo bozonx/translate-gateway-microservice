@@ -1,15 +1,19 @@
 {
     "name": "n8n-nodes-bozonx-translate-gateway-microservice",
     "version": "1.0.0",
-    "description": "n8n node for synchronous translation via Translate Gateway microservice (AssemblyAI)",
+    "description": "n8n node for text translation via Translate Gateway microservice (Google, DeepL, DeepSeek, OpenRouter)",
     "license": "MIT",
     "homepage": "https://github.com/bozonx/translate-gateway-microservice/tree/main/n8n-nodes-bozonx-translate-gateway-microservice#readme",
     "keywords": [
         "n8n-community-node-package",
         "n8n-nodes",
-        "speech-to-text",
-        "stt",
-        "assemblyai",
+        "translation",
+        "translate",
+        "google-translate",
+        "deepl",
+        "deepseek",
+        "openrouter",
+        "llm",
         "bozonx"
     ],
     "author": {

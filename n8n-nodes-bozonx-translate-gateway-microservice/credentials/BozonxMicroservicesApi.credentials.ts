@@ -4,8 +4,8 @@ export class BozonxMicroservicesApi implements ICredentialType {
 	name = 'bozonxMicroservicesApi';
 	displayName = 'Bozonx Microservices API';
 	documentationUrl =
-		'https://github.com/bozonx/stt-gateway-microservice/tree/main/n8n-nodes-bozonx-stt-gateway-microservice#readme';
-	icon = 'file:nodes/SttGateway/stt-gateway.svg' as unknown as ICredentialType['icon'];
+		'https://github.com/bozonx/translate-gateway-microservice/tree/main/n8n-nodes-bozonx-translate-gateway-microservice#readme';
+	icon = 'file:nodes/TranslateGateway/translate-gateway.svg' as unknown as ICredentialType['icon'];
 	properties: INodeProperties[] = [
 		{
 			displayName: 'Gateway URL',

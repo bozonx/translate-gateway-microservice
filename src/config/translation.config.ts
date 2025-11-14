@@ -9,7 +9,7 @@ export class TranslationConfig {
 
   @IsInt()
   @Min(1)
-  @Max(20000)
+  @Max(100000)
   public maxTextLength!: number;
 
   @IsInt()
@@ -21,7 +21,7 @@ export class TranslationConfig {
 }
 
 export default registerAs('translation', (): TranslationConfig => {
-  const allowedProvidersRaw = (process.env.TRANSLATE_ALLOWED_PROVIDERS ?? '').trim();
+  const allowedProvidersRaw = (process.env.ALLOWED_PROVIDERS ?? '').trim();
   const allowedProviders = allowedProvidersRaw
     ? allowedProvidersRaw
         .split(',')
@@ -30,8 +30,8 @@ export default registerAs('translation', (): TranslationConfig => {
     : undefined;
 
   const config = plainToClass(TranslationConfig, {
-    defaultProvider: (process.env.TRANSLATE_DEFAULT_PROVIDER ?? 'google').trim(),
-    maxTextLength: parseInt(process.env.TRANSLATE_MAX_TEXT_LENGTH ?? '5000', 10),
+    defaultProvider: (process.env.DEFAULT_PROVIDER ?? 'google').trim(),
+    maxTextLength: parseInt(process.env.TRANSLATE_MAX_TEXT_LENGTH ?? '100000', 10),
     requestTimeoutSec: parseInt(process.env.REQUEST_TIMEOUT_SEC ?? '60', 10),
     allowedProviders,
   });

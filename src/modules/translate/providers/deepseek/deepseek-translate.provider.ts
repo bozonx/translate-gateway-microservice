@@ -14,7 +14,7 @@ export class DeepSeekTranslateProvider implements TranslateProvider {
     this.baseUrl = (process.env.DEEPSEEK_API_BASE_URL?.trim() || 'https://api.deepseek.com');
     this.defaultModel = (process.env.DEEPSEEK_DEFAULT_MODEL?.trim() || 'deepseek-chat');
     this.systemPromptTemplate =
-      process.env.TRANSLATE_LLM_SYSTEM_PROMPT?.trim() ||
+      process.env.LLM_SYSTEM_PROMPT?.trim() ||
       'You are a professional translator. Translate the user message into {targetLang}. If source language is provided ({sourceLang}), use it; otherwise detect it. Preserve meaning, tone, and formatting. For format={format}, keep the same formatting (preserve HTML tags when html). Output only the translated text, without any explanations.';
 
     this.client = apiKey

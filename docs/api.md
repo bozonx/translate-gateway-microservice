@@ -13,9 +13,9 @@ Request body (JSON):
 
 - `text: string` — required. Source text.
 - `targetLang: string` — required. Target language (ISO 639-1), e.g., `en`, `ru`.
- `sourceLang?: string` — optional. Source language; if omitted, the provider may detect it.
- `provider?: string` — optional. Provider name (defaults to `TRANSLATE_DEFAULT_PROVIDER`). Supported: `google`, `deepl`, `deepseek`, `openrouter`.
- `model?: string` — optional. Model name for LLM providers (DeepSeek or OpenRouter). If omitted, a provider-specific default will be used (`DEEPSEEK_DEFAULT_MODEL` or `OPENROUTER_DEFAULT_MODEL`).
+- `sourceLang?: string` — optional. Source language; if omitted, the provider may detect it.
+- `provider?: string` — optional. Provider name (defaults to `DEFAULT_PROVIDER`). Supported: `google`, `deepl`, `deepseek`, `openrouter`.
+- `model?: string` — optional. Model name for LLM providers (DeepSeek or OpenRouter). If omitted, a provider-specific default will be used (`DEEPSEEK_DEFAULT_MODEL` or `OPENROUTER_DEFAULT_MODEL`).
 - `maxLength?: number` — optional. Per-request max input length. Effective limit: `min(TRANSLATE_MAX_TEXT_LENGTH, maxLength)`.
 
 Behavior & format:
@@ -117,26 +117,6 @@ Common cases:
 - `413 Payload Too Large` — input exceeds the effective limit.
 - `422 Unprocessable Entity` — provider error (quota/data limits, etc.).
 - `503 Service Unavailable` — provider unavailable/timeout.
-
-## Environment
-
-- `TRANSLATE_DEFAULT_PROVIDER` — default provider (default: `google`).
-- `TRANSLATE_MAX_TEXT_LENGTH` — max input length.
-- `TRANSLATE_ALLOWED_PROVIDERS` — comma-separated allow-list; if empty, all providers are allowed.
-- `REQUEST_TIMEOUT_SEC` — timeout for provider requests (default: `60`).
-- Google ADC: set `GOOGLE_APPLICATION_CREDENTIALS` if needed (path to service account JSON).
-- DeepL: set `DEEPL_AUTH_KEY` — DeepL API key.
-- DeepSeek (OpenAI‑compatible):
-  - `DEEPSEEK_API_KEY` — API key
-  - `DEEPSEEK_API_BASE_URL` — base URL (default: `https://api.deepseek.com`)
-  - `DEEPSEEK_DEFAULT_MODEL` — default model (e.g., `deepseek-chat`)
-  - `TRANSLATE_LLM_SYSTEM_PROMPT` — system prompt template for translation (`{targetLang}`, `{sourceLang}`, `{format}`)
-- OpenRouter (OpenAI‑compatible):
-  - `OPENROUTER_API_KEY` — API key
-  - `OPENROUTER_API_BASE_URL` — base URL (default: `https://openrouter.ai/api/v1`)
-  - `OPENROUTER_DEFAULT_MODEL` — default model (e.g., `openrouter/auto`)
-
-See `README.md` for configuration and Docker details.
 
 ## Limitations
 

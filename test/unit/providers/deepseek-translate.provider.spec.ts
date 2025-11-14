@@ -23,7 +23,7 @@ describe('DeepSeekTranslateProvider (unit)', () => {
     process.env.DEEPSEEK_API_KEY = 'test-key';
     delete process.env.DEEPSEEK_DEFAULT_MODEL; // ensure default kicks in
     delete process.env.DEEPSEEK_API_BASE_URL;
-    delete process.env.TRANSLATE_LLM_SYSTEM_PROMPT;
+    delete process.env.LLM_SYSTEM_PROMPT;
   });
 
   afterEach(() => {

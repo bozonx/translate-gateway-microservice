@@ -11,15 +11,15 @@ function makeRegistry(map: Record<string, TranslateProvider>): TranslateProvider
 describe('Translate (e2e)', () => {
   let app: NestFastifyApplication;
   let savedEnv: {
-    TRANSLATE_DEFAULT_PROVIDER?: string;
-    TRANSLATE_ALLOWED_PROVIDERS?: string;
+    DEFAULT_PROVIDER?: string;
+    ALLOWED_PROVIDERS?: string;
     REQUEST_TIMEOUT_SEC?: string;
   };
 
   beforeAll(() => {
     savedEnv = {
-      TRANSLATE_DEFAULT_PROVIDER: process.env.TRANSLATE_DEFAULT_PROVIDER,
-      TRANSLATE_ALLOWED_PROVIDERS: process.env.TRANSLATE_ALLOWED_PROVIDERS,
+      DEFAULT_PROVIDER: process.env.DEFAULT_PROVIDER,
+      ALLOWED_PROVIDERS: process.env.ALLOWED_PROVIDERS,
       REQUEST_TIMEOUT_SEC: process.env.REQUEST_TIMEOUT_SEC,
     };
   });
@@ -62,15 +62,15 @@ describe('Translate (e2e)', () => {
   }
 
   beforeEach(async () => {
-    process.env.TRANSLATE_DEFAULT_PROVIDER = 'google';
-    process.env.TRANSLATE_ALLOWED_PROVIDERS = '';
+    process.env.DEFAULT_PROVIDER = 'google';
+    process.env.ALLOWED_PROVIDERS = '';
     process.env.REQUEST_TIMEOUT_SEC = '60';
     app = await createApp();
   });
 
   afterAll(async () => {
-    process.env.TRANSLATE_DEFAULT_PROVIDER = savedEnv.TRANSLATE_DEFAULT_PROVIDER;
-    process.env.TRANSLATE_ALLOWED_PROVIDERS = savedEnv.TRANSLATE_ALLOWED_PROVIDERS;
+    process.env.DEFAULT_PROVIDER = savedEnv.DEFAULT_PROVIDER;
+    process.env.ALLOWED_PROVIDERS = savedEnv.ALLOWED_PROVIDERS;
     process.env.REQUEST_TIMEOUT_SEC = savedEnv.REQUEST_TIMEOUT_SEC;
   });
 
@@ -168,8 +168,8 @@ describe('Translate (e2e)', () => {
 
   it('returns 404 when provider not in allow-list', async () => {
     // Restrict allow-list to google only
-    const oldEnv = process.env.TRANSLATE_ALLOWED_PROVIDERS;
-    process.env.TRANSLATE_ALLOWED_PROVIDERS = 'google';
+    const oldEnv = process.env.ALLOWED_PROVIDERS;
+    process.env.ALLOWED_PROVIDERS = 'google';
 
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
@@ -195,7 +195,7 @@ describe('Translate (e2e)', () => {
     expect(res.statusCode).toBe(404);
 
     await localApp.close();
-    process.env.TRANSLATE_ALLOWED_PROVIDERS = oldEnv;
+    process.env.ALLOWED_PROVIDERS = oldEnv;
   });
 
   it('normalizes language tag casing for sourceLang/targetLang', async () => {
