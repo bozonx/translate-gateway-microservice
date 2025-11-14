@@ -1,5 +1,6 @@
 import type {
 	IExecuteFunctions,
+	IDataObject,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
@@ -27,6 +28,14 @@ export class BozonxTranslateGateway implements INodeType {
 		],
 		properties: [
 			{
+				displayName: 'Base Path',
+				name: 'basePath',
+				type: 'string',
+				default: 'translate/api/v1',
+				description:
+					'API base path appended to the Gateway URL (leading/trailing slashes are ignored)',
+			},
+			{
 				displayName: 'Text',
 				name: 'text',
 				type: 'string',
@@ -52,7 +61,8 @@ export class BozonxTranslateGateway implements INodeType {
 				name: 'sourceLang',
 				type: 'string',
 				default: '',
-				description: 'Source language code (ISO 639-1). If omitted, the provider may auto-detect it.',
+				description:
+					'Source language code (ISO 639-1). If omitted, the provider may auto-detect it.',
 				placeholder: 'ru',
 			},
 			{
@@ -99,7 +109,8 @@ export class BozonxTranslateGateway implements INodeType {
 						provider: ['deepseek', 'openrouter'],
 					},
 				},
-				description: 'Model name for LLM providers. If omitted, provider-specific default will be used.',
+				description:
+					'Model name for LLM providers. If omitted, provider-specific default will be used.',
 				placeholder: 'deepseek-chat',
 			},
 			{
@@ -107,7 +118,8 @@ export class BozonxTranslateGateway implements INodeType {
 				name: 'maxLength',
 				type: 'number',
 				default: 0,
-				description: 'Per-request max input length (characters). 0 means use service default. Effective limit: min(service_limit, maxLength).',
+				description:
+					'Per-request max input length (characters). 0 means use service default. Effective limit: min(service_limit, maxLength).',
 				typeOptions: {
 					minValue: 0,
 				},
@@ -121,15 +133,20 @@ export class BozonxTranslateGateway implements INodeType {
 
 		for (let i = 0; i < items.length; i++) {
 			try {
+				const rawBasePath = (this.getNodeParameter('basePath', i) as string) || '';
 				const text = this.getNodeParameter('text', i) as string;
 				const targetLang = this.getNodeParameter('targetLang', i) as string;
 				const sourceLang = this.getNodeParameter('sourceLang', i) as string;
 				const provider = this.getNodeParameter('provider', i) as string;
 				const model = this.getNodeParameter('model', i) as string;
 				const maxLength = this.getNodeParameter('maxLength', i) as number;
+				const normalizedBasePath = rawBasePath.trim().replace(/^\/+|\/+$/g, '');
+				const endpointPath = normalizedBasePath
+					? `/${normalizedBasePath}/translate`
+					: '/translate';
 
 				// Build request body
-				const body: Record<string, unknown> = {
+				const body: IDataObject = {
 					text,
 					targetLang,
 				};
@@ -151,27 +168,28 @@ export class BozonxTranslateGateway implements INodeType {
 				}
 
 				// Make API request
-				const response = await this.helpers.httpRequestWithAuthentication.call(
+				const response = (await this.helpers.httpRequestWithAuthentication.call(
 					this,
 					'bozonxMicroservicesApi',
 					{
 						method: 'POST',
-						url: '/api/v1/translate',
+						url: endpointPath,
 						body,
 						json: true,
 					},
-				);
+				)) as IDataObject;
 
 				returnData.push({
-					json: response as Record<string, unknown>,
+					json: response,
 					pairedItem: i,
 				});
 			} catch (error) {
 				if (this.continueOnFail()) {
+					const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 					returnData.push({
 						json: {
-							error: error.message,
-						},
+							error: errorMessage,
+						} as IDataObject,
 						pairedItem: i,
 					});
 					continue;
